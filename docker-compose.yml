@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  bd:
+    build: bd
+    container_name: tallerthreebd
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tallerthree
+      - MYSQL_PASSWORD=
+  api:
+    depends_on: 
+      - tallerthreebd
+    build: api
+    container_name: tallerthreeapi
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://tallerthreebd:3306/tallerthree?autoReconnect=true&useSSL=false
+      - WAIT_HOSTS=tallerthreebd:3306
+  web:
+    depends_on:
+      - tallerthreeapi
+    build: web
+    container_name: tallerthreeweb
+    ports:
+      - "4200:4200"
